@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,33 +11,45 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'EUR';
 
-  /// Funktion, mit der die Liste der Items für den Echtgeld-Dropdown-Picker erstellt wird:
-  List<DropdownMenuItem<String>> getDropdownItems() {
+  /// Funktion, mit der die Liste der Items für den Echtgeld-Dropdown-Picker erstellt wird
+  DropdownButton<String> getDropdownButton() {
     // First we create an empty List:
     List<DropdownMenuItem<String>> dropdownItems = [];
-
-    // Anschließend erstellen wir ein Item für jeden Eintrag in der Liste,
-    // die als "Vorlage" dient (hier also die 'currenciesList').
+    // Then we create an entry for our new list for every entry in the list
+    // we're using as template (in this instance, the "currencyList"):
     for (String currency in currenciesList) {
       var newItem = DropdownMenuItem(
         value: currency,
         child: Text(currency),
       );
-      // Das erstellte Item wird der leeren Liste 'dropdownItems' hinzugefügt:
+      // The created item is added to the list:
       dropdownItems.add(newItem);
     }
-    // ... und schließlich zurückgegeben:
-    return dropdownItems;
+    // Finally return the "ready" Dropdown-Button with the complete list of items:
+    return DropdownButton(
+      value: selectedCurrency,
+      items: dropdownItems,
+      onChanged: (value) {
+        setState(() {
+          selectedCurrency = value!;
+        });
+      },
+    );
   }
 
-  /// Funktion, mit der die Liste für den Echtgeld-Cupertino-Picker erstellt wird:
-  List<Widget> getPickerItems() {
-    List<Widget> pickerItems = [];
+  CupertinoPicker getCupertinoPicker() {
+    List<Text> pickerItems = [];
     for (String currency in currenciesList) {
       var newItem = Text(currency);
       pickerItems.add(newItem);
     }
-    return pickerItems;
+    return CupertinoPicker(
+      itemExtent: 30.0,
+      onSelectedItemChanged: (selectedIndex) {
+        print(selectedIndex);
+      },
+      children: pickerItems,
+    );
   }
 
   @override
@@ -75,13 +88,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.black87,
-            child: CupertinoPicker(
-              itemExtent: 30.0,
-              onSelectedItemChanged: (selectedIndex) {
-                print(selectedIndex);
-              },
-              children: getPickerItems(),
-            ),
+            child: Platform.isIOS ? getCupertinoPicker() : getDropdownButton(),
           ),
         ],
       ),
