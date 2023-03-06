@@ -95,13 +95,3 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 }
-
-// DropdownButton<String>(
-// value: selectedCurrency, // Wert, der angezeigt wird
-// items: getDropdownItems(),
-// onChanged: (value) {
-// setState(() {
-// selectedCurrency = value!;
-// });
-// print(value);
-// },
